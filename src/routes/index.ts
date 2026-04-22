@@ -1,6 +1,30 @@
 import express from "express";
+import { readFile, writeFile } from "fs/promises";
+
+const dataSource = "./data/list.txt";
 
 const router = express.Router();
+
+router.post("/contato", async (req, res) => {
+  const { name } = req.body || {};
+
+  if (!name || name.length < 2) {
+    res.json({ error: "Nome é preciso ter pelo menos 2 caracteres." });
+    return;
+  }
+
+  // Processamentos de dados
+  let list: string[] = [];
+  try {
+    const data = await readFile(dataSource, "utf-8");
+    list = data.split("\n");
+  } catch (error) {}
+
+  list.push(name);
+  await writeFile(dataSource, list.join("\n"));
+
+  res.status(201).json({ contato: name });
+});
 
 router.get("/", (req, res) => {
   res.send("Hello World!");
