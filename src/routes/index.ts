@@ -26,8 +26,15 @@ router.post("/contato", async (req, res) => {
   res.status(201).json({ contato: name });
 });
 
-router.get("/", (req, res) => {
-  res.send("Hello World!");
+router.get("/contatos", async (req, res) => {
+  let list: string[] = [];
+
+  try {
+    const data = await readFile(dataSource, "utf-8");
+    list = data.split("\n");
+  } catch (error) {}
+
+  res.json({ contatos: list });
 });
 
 export default router;
